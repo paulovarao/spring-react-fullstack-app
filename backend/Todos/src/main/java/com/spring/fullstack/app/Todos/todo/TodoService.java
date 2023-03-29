@@ -29,8 +29,8 @@ public class TodoService {
         return todos.stream().filter(predicate).toList();
     }
 
-    public Todo addTodo(String username, String description, LocalDate targetDate, boolean done) {
-        Todo todo = new Todo(++todosCount,username,description,targetDate,done);
+    public Todo addTodo(Todo todo) {
+        todo.setId(++todosCount);
         todos.add(todo);
         return todo;
     }
