@@ -1,4 +1,6 @@
-import { createContext, useContext, useState } from 'react'
+import { createContext, useContext, useEffect, useState } from 'react'
+import { apiClient } from '../api/ApiClient'
+import { authenticate } from '../api/BasicAuthApi'
 
 export const AuthContext = createContext()
 
@@ -8,23 +10,43 @@ export default function AuthProvider({ children }) {
 
     const [isAuthenticated, setAuthenticated] = useState(false)
     const [username, setUsername] = useState(null)
+    const [token, setToken] = useState(null)
 
-    function login(username, password) {
-        const authenticated = username === 'in28minutes' && password === 'dummy'
-        
-        setAuthenticated(authenticated)
+    useEffect(() => {
+        if(token) {
+            apiClient.defaults.headers.common['Authorization'] = token;
+        }
+    }, [token]);
 
-        if (authenticated) setUsername(username)
+    async function login(username, password) {
 
-        return authenticated
+        const baToken = `Basic ${window.btoa(`${username}:${password}`)}`
+
+        try {
+            const response = await authenticate(baToken)
+
+            const authenticated = response.status === 200
+            setAuthenticated(authenticated)
+            if (authenticated) {
+                setUsername(username)
+                setToken(baToken)
+            }
+
+            return authenticated
+        } catch (error) {
+            logout()
+            return false
+        }
     }
 
     function logout() {
         setAuthenticated(false)
+        setUsername(null)
+        setToken(null)
     }
 
     return (
-        <AuthContext.Provider value={ {isAuthenticated, login, logout, username} }>
+        <AuthContext.Provider value={ {isAuthenticated, login, logout, username, token} }>
             {children}
         </AuthContext.Provider>
     )
