@@ -8,42 +8,42 @@ import java.util.List;
 @RestController
 public class TodoResource {
 
-    private TodoService todoService;
+    private TodoRepository repository;
 
-    public TodoResource(TodoService todoService) {
-        this.todoService = todoService;
+    public TodoResource(TodoRepository repository) {
+        this.repository = repository;
     }
 
     @GetMapping("/users/{username}/todos")
     public List<Todo> retrieveTodos(@PathVariable String username) {
-        return todoService.findByUsername(username);
+        return repository.findByUsername(username);
     }
 
     @GetMapping("/users/{username}/todos/{id}")
     public Todo retrieveTodo(@PathVariable String username, @PathVariable int id) {
-        return todoService.findById(id);
+        return repository.findById(id).get();
     }
 
     @DeleteMapping("/users/{username}/todos/{id}")
     public ResponseEntity<Void> deleteTodo(@PathVariable String username, @PathVariable int id) {
-        todoService.deleteById(id);
+        repository.deleteById(id);
         return ResponseEntity.noContent().build();
     }
 
     @PutMapping("/users/{username}/todos/{id}")
-    public Todo updateTodo(@PathVariable String username, @PathVariable int id,
-                                           @RequestBody Todo todo) {
+    public Todo updateTodo(@PathVariable String username, @PathVariable int id, @RequestBody Todo todo) {
         todo.setId(id);
         todo.setUsername(username);
-        todoService.updateTodo(todo);
+        repository.save(todo);
 
         return todo;
     }
 
     @PostMapping("/users/{username}/todos")
     public Todo createTodo(@PathVariable String username, @RequestBody Todo todo) {
+        todo.setId(null);
         todo.setUsername(username);
-        Todo createdTodo = todoService.addTodo(todo);
+        Todo createdTodo = repository.save(todo);
 
         return createdTodo;
     }

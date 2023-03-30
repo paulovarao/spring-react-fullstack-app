@@ -50,7 +50,7 @@ public class JwtSecurityConfig {
                 .authorizeHttpRequests(
                     auth -> auth
                         .requestMatchers("/authenticate").permitAll()
-                        // .requestMatchers(PathRequest.toH2Console()).permitAll() // h2-console is a servlet and NOT recommended for a production
+                        .requestMatchers(PathRequest.toH2Console()).permitAll() // h2-console is a servlet and NOT recommended for a production
                         .requestMatchers(HttpMethod.OPTIONS, "/**")
                         .permitAll()
                         .anyRequest()
