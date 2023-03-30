@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useState } from 'react'
 import { apiClient } from '../api/ApiClient'
-import { authenticate } from '../api/BasicAuthApi'
+import { authenticateWithJwtMethod } from '../api/AuthApi'
 
 export const AuthContext = createContext()
 
@@ -20,16 +20,14 @@ export default function AuthProvider({ children }) {
 
     async function login(username, password) {
 
-        const baToken = `Basic ${window.btoa(`${username}:${password}`)}`
-
         try {
-            const response = await authenticate(baToken)
+            const response = await authenticateWithJwtMethod(username, password)
 
             const authenticated = response.status === 200
             setAuthenticated(authenticated)
             if (authenticated) {
                 setUsername(username)
-                setToken(baToken)
+                setToken(`Bearer ${response.data.token}`)
             }
 
             return authenticated
