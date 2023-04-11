@@ -6,4 +6,12 @@ To do...
 
 ## Development
 
-To do...
+### Backend
+
+#### Docker
+
+- in root folder:
+
+> build and run: `docker-compose up --build -d`
+
+> stop and delete `containers: docker-compose down`

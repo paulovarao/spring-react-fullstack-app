@@ -1,0 +1,39 @@
+# version '3.8'
+services:
+  # reverse proxy
+  proxy:
+    container_name: todos-proxy
+    build:
+      context: ./proxy
+      dockerfile: ./Dockerfile
+    depends_on:
+      - ui
+    ports:
+      - 8080:80
+    networks:
+      - local_network
+
+  # todos ui
+  ui:
+    container_name: todos-ui
+    build:
+      context: ./frontend/todo-app
+      dockerfile: ./Dockerfile
+      args:
+        - REACT_APP_API_URL=/api
+    depends_on:
+      - api
+    networks:
+      - local_network
+
+  # todos api
+  api:
+    container_name: todos-api
+    build:
+      context: ./backend/Todos
+      dockerfile: ./Dockerfile
+    networks:
+      - local_network
+
+networks:
+  local_network:

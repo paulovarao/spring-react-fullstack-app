@@ -1,5 +1,6 @@
 import { apiClient } from "./ApiClient"
 
+
 export const authenticateWithBasicMethod = token => apiClient.get('/basicauth', {
     headers: {
         Authorization: token
